@@ -64,18 +64,16 @@ router.post('/', async (req, res) => {
     );
 
     // 🔔 Get token & send push notification
-    const tokenRes = await client.query(
-      `SELECT "Token" FROM "DeviceTokens" WHERE "EmpNumber" = $1`,
-      [empnumber]
-    );
-    const token = tokenRes.rows[0]?.Token;
-    if (token) {
-     await sendPushNotification(
-  token,
-  `${attendType} marked for ${empName}`,
-  `Time: ${entryTime}, Date: ${entryDate}`
-);
-    }
+   const tokensRes = await client.query(`SELECT "Token" FROM "DeviceTokens"`);
+
+for (const row of tokensRes.rows) {
+  await sendPushNotification(
+    row.Token,
+    `${attendType} marked for ${empName}`,
+    `Time: ${entryTime}, Date: ${entryDate}`
+  );
+}
+
 
     client.release();
     res.json({ message: `${attendType} successful` });
