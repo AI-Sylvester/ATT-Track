@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 const pool = require('../db');
-const { sendPushNotification } = require('../utils/push'); // 📢 Util to send push
+const sendPushNotification = require('../utils/push');
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
