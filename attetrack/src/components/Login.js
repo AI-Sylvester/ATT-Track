@@ -1,3 +1,4 @@
+// AuthPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -11,49 +12,67 @@ function AuthPage() {
   const navigate = useNavigate();
 
   const registerDeviceToken = async (token) => {
+    const empnumber = localStorage.getItem('empnumber'); // ✅ read from localStorage
+    if (!empnumber) {
+      console.warn('No empnumber in localStorage');
+      return;
+    }
+
     try {
       await axios.post(`${apiUrl}/auth/register-token`, {
-        empnumber: username,
+        empnumber,
         token,
       });
+      console.log('✅ Token registered on server');
     } catch (err) {
-      console.error('Failed to register token:', err);
+      console.error('❌ Failed to register token:', err);
     }
   };
 
- const getPushToken = async () => {
-  const permStatus = await PushNotifications.requestPermissions();
+  const getPushToken = async () => {
+    try {
+      const permStatus = await PushNotifications.requestPermissions();
+      if (permStatus.receive !== 'granted') {
+        console.warn('🚫 Push permission not granted');
+        return;
+      }
 
-  if (permStatus.receive === 'granted') {
-    // Attach listener first
-    PushNotifications.addListener('registration', async (token) => {
-      console.log('FCM Token:', token.value);
-      await registerDeviceToken(token.value);
-    });
+      return new Promise((resolve, reject) => {
+        PushNotifications.addListener('registration', async (token) => {
+          console.log('✅ FCM Token:', token.value);
+          await registerDeviceToken(token.value);
+          resolve(token.value);
+        });
 
-    // THEN register
-    PushNotifications.register();
+        PushNotifications.addListener('registrationError', (error) => {
+          console.error('❌ Push registration error:', error);
+          reject(error);
+        });
 
-    PushNotifications.addListener('registrationError', (error) => {
-      console.error('Push registration error:', error);
-    });
-  }
-};
-
+        PushNotifications.register();
+      });
+    } catch (err) {
+      console.error('❌ Error getting push token:', err);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      const response = await axios.post(`${apiUrl}${endpoint}`, { username, password });
+      const response = await axios.post(`${apiUrl}${endpoint}`, {
+        username,
+        password,
+      });
 
       if (response.data.message.includes('successful')) {
         alert(response.data.message);
 
         if (isLogin) {
-          await getPushToken(); // get and send token after login
+          localStorage.setItem('empnumber', username); // ✅ save for token registration
+          await getPushToken();                         // ✅ trigger token registration
           navigate('/home');
         } else {
-          setIsLogin(true); // switch to login form
+          setIsLogin(true);
         }
       } else {
         alert(response.data.error || 'Operation failed');
@@ -70,14 +89,14 @@ function AuthPage() {
         type="text"
         placeholder="Username"
         value={username}
-        onChange={e => setUsername(e.target.value)}
+        onChange={(e) => setUsername(e.target.value)}
         style={styles.input}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
         style={styles.input}
       />
       <button onClick={handleSubmit} style={styles.button}>
@@ -85,10 +104,7 @@ function AuthPage() {
       </button>
       <p style={styles.toggle}>
         {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-        <span
-          style={styles.link}
-          onClick={() => setIsLogin(!isLogin)}
-        >
+        <span style={styles.link} onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? 'Register here' : 'Login here'}
         </span>
       </p>
@@ -105,7 +121,7 @@ const styles = {
     background: '#f9f9f9',
     borderRadius: 10,
     marginTop: 100,
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
   },
   input: {
     width: '100%',

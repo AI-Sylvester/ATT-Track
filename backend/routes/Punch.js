@@ -70,10 +70,11 @@ router.post('/', async (req, res) => {
     );
     const token = tokenRes.rows[0]?.Token;
     if (token) {
-      await sendPushNotification(token, {
-        title: `${attendType} marked for ${empName}`,
-        body: `Time: ${entryTime}, Date: ${entryDate}`,
-      });
+     await sendPushNotification(
+  token,
+  `${attendType} marked for ${empName}`,
+  `Time: ${entryTime}, Date: ${entryDate}`
+);
     }
 
     client.release();

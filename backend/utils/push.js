@@ -1,12 +1,8 @@
-// backend/utils/push.js
 const admin = require('../firebaseadmin');
 
 async function sendPushNotification(token, title, body) {
   const message = {
-    notification: {
-      title,
-      body,
-    },
+    notification: { title, body },
     token,
   };
 
