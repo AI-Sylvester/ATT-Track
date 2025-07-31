@@ -54,7 +54,7 @@ router.post('/register-token', async (req, res) => {
   const { empnumber, token } = req.body;
   try {
     await pool.query(
-      `INSERT INTO DeviceTokens (EmpNumber, Token) 
+      `INSERT INTO "DeviceTokens" (EmpNumber, Token) 
        VALUES ($1, $2)
        ON CONFLICT (EmpNumber) DO UPDATE SET Token = $2, UpdatedAt = CURRENT_TIMESTAMP`,
       [empnumber, token]
