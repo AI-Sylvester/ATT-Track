@@ -15,5 +15,5 @@ admin.initializeApp({
     client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
   }),
 });
-
+console.log('✅ Firebase admin initialized');
 module.exports = admin;

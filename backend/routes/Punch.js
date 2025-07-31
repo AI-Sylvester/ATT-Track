@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
    const tokensRes = await client.query(`SELECT "Token" FROM "DeviceTokens"`);
 
 for (const row of tokensRes.rows) {
+    console.log('📲 Sending to token:', row.Token);
   await sendPushNotification(
     row.Token,
     `${attendType} marked for ${empName}`,
