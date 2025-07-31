@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301230136391",
+    "project_id": "attendanceapp-121de",
+    "storage_bucket": "attendanceapp-121de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301230136391:android:7180029ff0f9b94269a562",
+        "android_client_info": {
+          "package_name": "com.yourcompany.atttrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVHDuw-P_Ktv2m8hsW4xLgaUf3jRBry3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

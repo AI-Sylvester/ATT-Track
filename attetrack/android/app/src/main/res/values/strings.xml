@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ATT-Track</string>
+    <string name="title_activity_main">ATT-Track</string>
+    <string name="package_name">com.yourcompany.atttrack</string>
+    <string name="custom_url_scheme">com.yourcompany.atttrack</string>
+</resources>
