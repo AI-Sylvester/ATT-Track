@@ -27,7 +27,7 @@ function TodayPunches() {
 
   const filteredLogs = logs.filter((log) =>
     log.Name?.toLowerCase().includes(search.toLowerCase()) ||
-    log.EmpNumber?.toLowerCase().includes(search.toLowerCase())
+    log.Empnumber?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -64,7 +64,7 @@ function TodayPunches() {
                 }
                 secondary={
                   <Typography variant="caption" color="text.secondary">
-                    Emp#: {log.EmpNumber} | Dept: {log.Department}
+                 {log.Empnumber} |  {log.Department}
                   </Typography>
                 }
               />
