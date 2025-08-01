@@ -97,6 +97,7 @@ router.get('/today', async (req, res) => {
       SELECT 
         e."Name", 
         e."Department", 
+          e."EmpNumber",  
         a."AttendType", 
         a."EntryTime" 
       FROM "AppTimeDet" a

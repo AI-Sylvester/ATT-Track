@@ -7,13 +7,17 @@ import {
   ListItemText,
   Avatar,
   Typography,
-  Divider
+  Divider,
+  Stack,
+  Chip,
+  TextField
 } from '@mui/material';
 import axios from 'axios';
 import { apiUrl } from './config';
 
-export default function TodayPunches() {
+function TodayPunches() {
   const [logs, setLogs] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     axios.get(`${apiUrl}/punchtime/today`)
@@ -21,43 +25,68 @@ export default function TodayPunches() {
       .catch(err => console.error('❌ Logs fetch error:', err));
   }, []);
 
+  const filteredLogs = logs.filter((log) =>
+    log.Name?.toLowerCase().includes(search.toLowerCase()) ||
+    log.EmpNumber?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>Today's Punch Logs</Typography>
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        {logs.map((log, index) => (
+    <Box sx={{ p: 1 }}>
+      <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+        Today's Punch Logs
+      </Typography>
+
+      <TextField
+        fullWidth
+        size="small"
+        label="Search Name or Emp#"
+        variant="outlined"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        sx={{ mb: 1 }}
+      />
+
+      <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        {filteredLogs.map((log, index) => (
           <React.Fragment key={index}>
-            <ListItem alignItems="flex-start">
+            <ListItem alignItems="flex-start" sx={{ py: 0.5 }}>
               <ListItemAvatar>
-                <Avatar sx={{ bgcolor: '#1db954' }}>
+                <Avatar sx={{ bgcolor: '#1db954', width: 32, height: 32, fontSize: 14 }}>
                   {log.Name?.charAt(0).toUpperCase()}
                 </Avatar>
               </ListItemAvatar>
+
               <ListItemText
                 primary={
-                  <Typography variant="subtitle1" fontWeight="bold">
+                  <Typography variant="body2" fontWeight="bold">
                     {log.Name}
                   </Typography>
                 }
                 secondary={
-                  <>
-                    <Typography variant="body2" color="text.secondary">
-                      Dept: {log.Department}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Type: <strong>{log.AttendType}</strong>
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Time: {log.EntryTime}
-                    </Typography>
-                  </>
+                  <Typography variant="caption" color="text.secondary">
+                    Emp#: {log.EmpNumber} | Dept: {log.Department}
+                  </Typography>
                 }
               />
+
+              <Stack spacing={0.5} alignItems="flex-end" sx={{ minWidth: 80 }}>
+                <Chip
+                  label={log.AttendType}
+                  color={log.AttendType === 'CheckIn' ? 'success' : 'primary'}
+                  size="small"
+                  sx={{ fontSize: '0.65rem', height: 22 }}
+                />
+                <Typography variant="caption" color="text.secondary">
+                  {log.EntryTime}
+                </Typography>
+              </Stack>
             </ListItem>
-            <Divider variant="inset" component="li" />
+            <Divider component="li" />
           </React.Fragment>
         ))}
       </List>
     </Box>
   );
 }
+
+export default TodayPunches;
