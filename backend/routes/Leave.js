@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
     const entryDate = now.toISOString().split('T')[0];
 
     await client.query(`
-      INSERT INTO "LeavePermission" 
+      INSERT INTO "LeavePermissionRequests" 
       ("EmpNumber", "Type", "Session", "FromTime", "ToTime", "PermissionType", "ApprovedBy", "EntryDate")
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
     `, [empnumber, type, session, fromTime, toTime, permissionType, approvedBy, entryDate]);
