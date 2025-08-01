@@ -17,7 +17,8 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
-import LogoutIcon from '@mui/icons-material/Logout';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -87,8 +88,8 @@ const Layout = () => {
         <BottomNavigation value={navValue} onChange={handleNavChange} showLabels>
           <BottomNavigationAction label="Home" value="/home" icon={<HomeIcon />} />
           <BottomNavigationAction label="Emp Master" value="/empmaster" icon={<GroupsIcon />} />
-            <BottomNavigationAction label="Punch Time" value="/punch" icon={<GroupsIcon />} />
-          <BottomNavigationAction label="Attendance" value="/logs" icon={<LogoutIcon />} />
+            <BottomNavigationAction label="Punch Time" value="/punch" icon={<AccessTimeIcon />} />
+          <BottomNavigationAction label="Attendance" value="/logs" icon={<ListAltIcon />} />
         </BottomNavigation>
       </Paper>
     </Box>

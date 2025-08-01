@@ -6,7 +6,7 @@ const path = require('path');
 const punchRouter = require('./routes/Punch');
 const authRouter = require('./routes/auth');
 const employeeRouter = require('./routes/employee');
-
+const leaveRouter= require('./routes/Leave');
 const app = express();
 const PORT = 5000;
 
@@ -27,6 +27,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRouter);
 app.use('/punchtime', punchRouter);
 app.use('/employee', employeeRouter);
+app.use('/leave',leaveRouter);
 
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://192.168.1.24:${PORT}`);
