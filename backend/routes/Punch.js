@@ -6,9 +6,7 @@ const pool = require('../db');
 const sendPushNotification = require('../utils/push');
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+fs.mkdirSync(uploadDir, { recursive: true }); // Make sure folder exists
 
 router.post('/', async (req, res) => {
   const { empnumber, location, image } = req.body;
