@@ -113,4 +113,30 @@ router.get('/today', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch logs' });
   }
 });
+router.get('/summary', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const today = new Date().toISOString().split('T')[0];
+
+    const result = await client.query(`
+      SELECT 
+        e."EmpNumber",
+        e."Name",
+        MIN(CASE WHEN a."AttendType" = 'CheckIn' THEN a."EntryTime" END) AS "CheckIn",
+        MAX(CASE WHEN a."AttendType" = 'CheckOut' THEN a."EntryTime" END) AS "CheckOut"
+      FROM "AppTimeDet" a
+      JOIN "EMPLOYEEMAS" e ON a."Empcode"::int = e."ID"
+      WHERE a."EntryDate" = $1
+      GROUP BY e."EmpNumber", e."Name"
+      ORDER BY e."Name"
+    `, [today]);
+
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('❌ Fetch Summary Error:', err);
+    res.status(500).json({ error: 'Failed to fetch summary', details: err.message });
+  }
+});
+
 module.exports = router;

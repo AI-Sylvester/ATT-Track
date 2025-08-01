@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import PunchTime from './components/PunchTime';
 import TodayPunches from './components/TodayAttendance';
 import usePushNotifications from './components/pushnotification';
+import AttendanceSummary from './components/AttendanceSummary';
 
 function App() {
   usePushNotifications(); // ✅ Always called unconditionally
@@ -23,6 +24,7 @@ function App() {
           <Route path="/empmaster" element={<EmpMaster />} />
           <Route path="/punch" element={<PunchTime />} />
           <Route path="/logs" element={<TodayPunches />} />
+          <Route path="/summary" element={<AttendanceSummary />} />
         </Route>
       </Routes>
     </Router>

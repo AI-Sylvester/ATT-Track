@@ -72,7 +72,7 @@ function TodayPunches() {
               <Stack spacing={0.5} alignItems="flex-end" sx={{ minWidth: 80 }}>
                 <Chip
                   label={log.AttendType}
-                  color={log.AttendType === 'CheckIn' ? 'success' : 'primary'}
+                  color={log.AttendType === 'CheckIn' ? 'success' : 'error'}
                   size="small"
                   sx={{ fontSize: '0.65rem', height: 22 }}
                 />

@@ -45,7 +45,7 @@ export default function Home() {
           color="secondary"
           size="large"
           sx={{ borderRadius: 2 }}
-          onClick={() => navigate('/attendance')} // optional page
+          onClick={() => navigate('/summary')} // optional page
         >
           Attendance
         </Button>
