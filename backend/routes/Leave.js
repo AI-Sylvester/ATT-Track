@@ -13,30 +13,50 @@ router.post('/', async (req, res) => {
   try {
     const client = await pool.connect();
 
+    // Get employee name
     const empRes = await client.query(
       `SELECT "Name" FROM "EMPLOYEEMAS" WHERE "EmpNumber" = $1`,
       [empnumber]
     );
-    if (empRes.rowCount === 0) return res.status(404).json({ error: 'Employee not found' });
+    if (empRes.rowCount === 0) {
+      client.release();
+      return res.status(404).json({ error: 'Employee not found' });
+    }
 
     const name = empRes.rows[0].Name;
     const now = new Date();
     const entryDate = now.toISOString().split('T')[0];
 
+    // Handle empty optional fields by converting "" to null
+    const cleanSession = session === '' ? null : session;
+    const cleanFromTime = fromTime === '' ? null : fromTime;
+    const cleanToTime = toTime === '' ? null : toTime;
+    const cleanPermissionType = permissionType === '' ? null : permissionType;
+
     await client.query(`
       INSERT INTO "LeavePermissionRequests" 
       ("EmpNumber", "Type", "Session", "FromTime", "ToTime", "PermissionType", "ApprovedBy", "EntryDate")
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-    `, [empnumber, type, session, fromTime, toTime, permissionType, approvedBy, entryDate]);
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `, [
+      empnumber,
+      type,
+      cleanSession,
+      cleanFromTime,
+      cleanToTime,
+      cleanPermissionType,
+      approvedBy,
+      entryDate
+    ]);
 
-    // Notify
+    // Send push notifications to all device tokens
     const tokens = await client.query(`SELECT "Token" FROM "DeviceTokens"`);
     for (const row of tokens.rows) {
       await sendPushNotification(
         row.Token,
         `${type} request from ${name}`,
-        type === 'Leave' ? `Session: ${session}` :
-        `Time: ${fromTime} - ${toTime} (${permissionType})`
+        type === 'Leave'
+          ? `Session: ${cleanSession || 'N/A'}`
+          : `Time: ${cleanFromTime || '-'} - ${cleanToTime || '-'} (${cleanPermissionType || '-'})`
       );
     }
 
