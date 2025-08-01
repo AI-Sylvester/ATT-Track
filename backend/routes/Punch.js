@@ -31,16 +31,18 @@ router.post('/', async (req, res) => {
     const empcode = empRes.rows[0].ID;
     const empName = empRes.rows[0].Name;
 
-    const now = new Date();
-    const entryDate = now.toISOString().split('T')[0];
-    const entryTime = now.toTimeString().split(' ')[0];
-
+const now = new Date();
+const entryDate = now.toISOString().split('T')[0];
+const entryTime = now.toLocaleTimeString('en-GB', {
+  hour12: false,
+  timeZone: 'Asia/Kolkata',
+});
     const punchRes = await client.query(
       `SELECT COUNT(*) FROM "AppTimeDet" WHERE "Empnumber" = $1 AND "EntryDate" = $2`,
       [empnumber, entryDate]
     );
     const punchCount = parseInt(punchRes.rows[0].count);
-    const attendType = punchCount === 0 ? 'CheckIn' : 'CheckOut';
+   const attendType = punchCount % 2 === 0 ? 'CheckIn' : 'CheckOut';
 
     const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
     const filename = `${empnumber}_${Date.now()}.jpg`;
