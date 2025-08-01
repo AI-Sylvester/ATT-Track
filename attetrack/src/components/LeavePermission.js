@@ -10,32 +10,52 @@ import {
   Typography,
   Snackbar,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Slider
 } from '@mui/material';
 import axios from 'axios';
+import { apiUrl } from './config';
 
 const LeavePermissionForm = () => {
   const [empnumber, setEmpNumber] = useState('');
+  const [empname, setEmpName] = useState('');
+  const [employeeList, setEmployeeList] = useState([]);
   const [type, setType] = useState('');
   const [session, setSession] = useState('');
   const [fromTime, setFromTime] = useState('');
+  const [duration, setDuration] = useState(90);
   const [toTime, setToTime] = useState('');
   const [permissionType, setPermissionType] = useState('');
-  const [approvedBy, setApprovedBy] = useState(localStorage.getItem('username') || '');
+  const approvedBy = localStorage.getItem('username') || '';
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  // Fetch employee list on load
   useEffect(() => {
-    if (fromTime) {
+    axios.get(`${apiUrl}/employee/basic`)
+      .then(res => setEmployeeList(res.data))
+      .catch(err => console.error('Failed to load employee list:', err));
+  }, []);
+
+  // Set employee name when number changes
+  useEffect(() => {
+    const selected = employeeList.find(e => e.EmpNumber === empnumber);
+    setEmpName(selected ? selected.Name : '');
+  }, [empnumber, employeeList]);
+
+  // Auto-calculate To Time
+  useEffect(() => {
+    if (fromTime && duration) {
       const [h, m] = fromTime.split(':').map(Number);
       const start = new Date();
-      start.setHours(h, m + 90);
+      start.setHours(h);
+      start.setMinutes(m + duration);
       const hh = String(start.getHours()).padStart(2, '0');
       const mm = String(start.getMinutes()).padStart(2, '0');
       setToTime(`${hh}:${mm}`);
     }
-  }, [fromTime]);
+  }, [fromTime, duration]);
 
   const handleSubmit = async () => {
     if (!empnumber || !type) {
@@ -43,9 +63,10 @@ const LeavePermissionForm = () => {
       setOpenSnackbar(true);
       return;
     }
+
     setLoading(true);
     try {
-      const res = await axios.post('http://192.168.1.24:5000/leaverequest', {
+      const res = await axios.post(`${apiUrl}/leave`, {
         empnumber,
         type,
         session,
@@ -74,13 +95,31 @@ const LeavePermissionForm = () => {
       <Typography variant="h6" gutterBottom>
         Leave / Permission Form
       </Typography>
+
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="emp-label">Employee Number</InputLabel>
+        <Select
+          labelId="emp-label"
+          value={empnumber}
+          label="Employee Number"
+          onChange={(e) => setEmpNumber(e.target.value)}
+        >
+          {employeeList.map(emp => (
+            <MenuItem key={emp.EmpNumber} value={emp.EmpNumber}>
+              {emp.EmpNumber} - {emp.Name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <TextField
         fullWidth
-        label="Employee Number"
-        value={empnumber}
-        onChange={(e) => setEmpNumber(e.target.value)}
+        label="Employee Name"
+        value={empname}
         margin="normal"
+        InputProps={{ readOnly: true }}
       />
+
       <FormControl fullWidth margin="normal">
         <InputLabel id="type-label">Type</InputLabel>
         <Select
@@ -93,6 +132,7 @@ const LeavePermissionForm = () => {
           <MenuItem value="Permission">Permission</MenuItem>
         </Select>
       </FormControl>
+
       {type === 'Leave' && (
         <TextField
           select
@@ -102,10 +142,12 @@ const LeavePermissionForm = () => {
           fullWidth
           margin="normal"
         >
+           <MenuItem value="Full">Full</MenuItem>
           <MenuItem value="Morning">Morning</MenuItem>
           <MenuItem value="Evening">Evening</MenuItem>
         </TextField>
       )}
+
       {type === 'Permission' && (
         <>
           <TextField
@@ -117,6 +159,22 @@ const LeavePermissionForm = () => {
             margin="normal"
             InputLabelProps={{ shrink: true }}
           />
+
+          <Box mt={2}>
+            <Typography gutterBottom>
+              Duration: {duration} minutes
+            </Typography>
+            <Slider
+              value={duration}
+              onChange={(e, newValue) => setDuration(newValue)}
+              valueLabelDisplay="auto"
+              step={5}
+              marks
+              min={10}
+              max={90}
+            />
+          </Box>
+
           <TextField
             fullWidth
             label="To Time (auto)"
@@ -124,6 +182,7 @@ const LeavePermissionForm = () => {
             InputProps={{ readOnly: true }}
             margin="normal"
           />
+
           <TextField
             select
             fullWidth
@@ -135,15 +194,9 @@ const LeavePermissionForm = () => {
             <MenuItem value="OD">OD</MenuItem>
             <MenuItem value="Own">Own</MenuItem>
           </TextField>
-          <TextField
-            fullWidth
-            label="Approved By"
-            value={approvedBy}
-            onChange={(e) => setApprovedBy(e.target.value)}
-            margin="normal"
-          />
         </>
       )}
+
       <Box mt={2}>
         <Button
           fullWidth
@@ -155,6 +208,7 @@ const LeavePermissionForm = () => {
           {loading ? <CircularProgress size={24} /> : 'Submit'}
         </Button>
       </Box>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={4000}

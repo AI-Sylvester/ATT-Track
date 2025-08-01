@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { sendPushNotification } = require('../firebaseadmin');
+const sendPushNotification = require('../utils/push');
 
 router.post('/', async (req, res) => {
   const { empnumber, type, session, fromTime, toTime, permissionType, approvedBy } = req.body;

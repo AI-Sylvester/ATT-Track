@@ -49,6 +49,17 @@ export default function Home() {
         >
           Attendance
         </Button>
+     
+           <Button
+          fullWidth
+          variant="contained"
+          color="secondary"
+          size="large"
+          sx={{ borderRadius: 2 }}
+          onClick={() => navigate('/leave')} // optional page
+        >
+       Leave/Permission
+        </Button>
       </Box>
     </Box>
   );
