@@ -90,6 +90,7 @@ const Layout = () => {
           <BottomNavigationAction label="Emp Master" value="/empmaster" icon={<GroupsIcon />} />
             <BottomNavigationAction label="Punch Time" value="/punch" icon={<AccessTimeIcon />} />
           <BottomNavigationAction label="Attendance" value="/logs" icon={<ListAltIcon />} />
+          <BottomNavigationAction label="LeavePermission" value="/leavelist" icon={<ListAltIcon />} />
         </BottomNavigation>
       </Paper>
     </Box>

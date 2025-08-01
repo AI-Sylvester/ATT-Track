@@ -9,6 +9,7 @@ import TodayPunches from './components/TodayAttendance';
 import usePushNotifications from './components/pushnotification';
 import AttendanceSummary from './components/AttendanceSummary';
 import LeavePermissionForm from './components/LeavePermission';
+import LeavePermissionList from './components/LeavePermissionList';
 
 function App() {
   usePushNotifications(); // ✅ Always called unconditionally
@@ -27,6 +28,7 @@ function App() {
           <Route path="/logs" element={<TodayPunches />} />
           <Route path="/summary" element={<AttendanceSummary />} />
              <Route path="/leave" element={<LeavePermissionForm />} />
+             <Route path="/leavelist" element={<LeavePermissionList />} />
         </Route>
       </Routes>
     </Router>

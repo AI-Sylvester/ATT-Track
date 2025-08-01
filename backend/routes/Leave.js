@@ -67,5 +67,34 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Database error', details: err.message });
   }
 });
+router.get('/', async (req, res) => {
+  const { filter } = req.query;
+  let condition = '1=1'; // default: no filter
+
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastDayOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+  if (filter === 'Today') {
+    condition = `"EntryDate" = CURRENT_DATE`;
+  } else if (filter === 'Week') {
+    condition = `"EntryDate" >= CURRENT_DATE - INTERVAL '7 days'`;
+  } else if (filter === 'Month') {
+    condition = `"EntryDate" >= '${firstDayOfMonth.toISOString().slice(0, 10)}'`;
+  } else if (filter === 'LastMonth') {
+    condition = `"EntryDate" BETWEEN '${firstDayOfLastMonth.toISOString().slice(0, 10)}' AND '${lastDayOfLastMonth.toISOString().slice(0, 10)}'`;
+  }
+
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`SELECT * FROM "LeavePermissionRequests" WHERE ${condition} ORDER BY "CreatedAt" DESC`);
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Get Leave/Permission Error:', err);
+    res.status(500).json({ error: 'DB error' });
+  }
+});
 
 module.exports = router;
