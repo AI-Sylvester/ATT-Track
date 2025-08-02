@@ -3,7 +3,6 @@ const admin = require('../firebaseadmin');
 async function sendPushNotification(token, title, body) {
  const message = {
   notification: { title, body },
-   icon: 'push_icon',
   data: { click_action: 'FLUTTER_NOTIFICATION_CLICK' }, // for foreground/background/killed delivery
   token,
 };
