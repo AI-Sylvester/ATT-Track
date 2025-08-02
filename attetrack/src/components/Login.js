@@ -67,7 +67,7 @@ function AuthPage() {
       if (response.data.message.includes('successful')) {
         alert(response.data.message);
 
-        if (isLogin) {
+        if (isLogin) {   localStorage.setItem('appToken', response.data.token); // 🔁 renamed token key
           localStorage.setItem('empnumber', username); // ✅ save for token registration
           await getPushToken();                         // ✅ trigger token registration
           navigate('/home');

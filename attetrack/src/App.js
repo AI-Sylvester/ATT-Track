@@ -10,25 +10,32 @@ import usePushNotifications from './components/pushnotification';
 import AttendanceSummary from './components/AttendanceSummary';
 import LeavePermissionForm from './components/LeavePermission';
 import LeavePermissionList from './components/LeavePermissionList';
+import PrivateRoute from './PrivateRoute'; // ✅ Import your wrapper
 
 function App() {
-  usePushNotifications(); // ✅ Always called unconditionally
+  usePushNotifications(); // ✅ Optional
 
   return (
     <Router>
       <Routes>
-        {/* Login (no layout) */}
+        {/* Public Login Route */}
         <Route path="/" element={<AuthPage />} />
 
-        {/* Routes inside Layout */}
-        <Route element={<Layout />}>
+        {/* Protected Routes inside Layout */}
+        <Route
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
           <Route path="/home" element={<Home />} />
           <Route path="/empmaster" element={<EmpMaster />} />
           <Route path="/punch" element={<PunchTime />} />
           <Route path="/logs" element={<TodayPunches />} />
           <Route path="/summary" element={<AttendanceSummary />} />
-             <Route path="/leave" element={<LeavePermissionForm />} />
-             <Route path="/leavelist" element={<LeavePermissionList />} />
+          <Route path="/leave" element={<LeavePermissionForm />} />
+          <Route path="/leavelist" element={<LeavePermissionList />} />
         </Route>
       </Routes>
     </Router>

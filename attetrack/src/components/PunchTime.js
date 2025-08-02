@@ -99,20 +99,19 @@ export default function PunchTime() {
       <Typography variant="h6" gutterBottom>Punch Time</Typography>
 
       <TextField
-        fullWidth
-        select
-        label="Employee Number"
-        value={selectedEmp}
-        onChange={(e) => setSelectedEmp(e.target.value)}
-        margin="normal"
-      >
-        {employees.map((emp) => (
-          <MenuItem key={emp.EmpNumber} value={emp.EmpNumber}>
-            {emp.EmpNumber}
-          </MenuItem>
-        ))}
-      </TextField>
-
+  fullWidth
+  select
+  label="Employee Number"
+  value={selectedEmp}
+  onChange={(e) => setSelectedEmp(e.target.value)}
+  margin="normal"
+>
+  {employees.map((emp) => (
+    <MenuItem key={emp.EmpNumber} value={emp.EmpNumber}>
+      {`${emp.EmpNumber} - ${emp.Name}`}
+    </MenuItem>
+  ))}
+</TextField>
       <TextField
         fullWidth
         label="Name"

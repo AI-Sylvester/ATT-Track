@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const pool = require('../db');
-
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 // Register route
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
@@ -43,12 +44,21 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid username or password' });
     }
 
-    res.json({ message: 'Login successful', user: { username } });
+    // Create JWT token with 1-hour expiry
+    const token = jwt.sign(
+      { username: user.rows[0].username },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ message: 'Login successful', token }); // Return token to frontend
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Login failed' });
   }
 });
+
+
 // Example route in Express
 router.post('/register-token', async (req, res) => {
   const { empnumber, token } = req.body;
