@@ -5,14 +5,30 @@ import { useNavigate } from 'react-router-dom';
 import { apiUrl } from './config';
 import { PushNotifications } from '@capacitor/push-notifications';
 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Avatar,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+
+
+
 function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const registerDeviceToken = async (token) => {
-    const empnumber = localStorage.getItem('empnumber'); // ✅ read from localStorage
+    const empnumber = localStorage.getItem('empnumber');
     if (!empnumber) {
       console.warn('No empnumber in localStorage');
       return;
@@ -67,9 +83,10 @@ function AuthPage() {
       if (response.data.message.includes('successful')) {
         alert(response.data.message);
 
-        if (isLogin) {   localStorage.setItem('appToken', response.data.token); // 🔁 renamed token key
-          localStorage.setItem('empnumber', username); // ✅ save for token registration
-          await getPushToken();                         // ✅ trigger token registration
+        if (isLogin) {
+          localStorage.setItem('appToken', response.data.token);
+          localStorage.setItem('empnumber', username);
+          await getPushToken();
           navigate('/home');
         } else {
           setIsLogin(true);
@@ -83,73 +100,85 @@ function AuthPage() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2>{isLogin ? 'Login' : 'Register'}</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        style={styles.input}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={styles.input}
-      />
-      <button onClick={handleSubmit} style={styles.button}>
-        {isLogin ? 'Login' : 'Register'}
-      </button>
-      <p style={styles.toggle}>
-        {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-        <span style={styles.link} onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? 'Register here' : 'Login here'}
-        </span>
-      </p>
-    </div>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+      sx={{ backgroundColor: '#f0f2f5' }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          width: isMobile ? '90%' : 400,
+          p: 4,
+          borderRadius: 3,
+          textAlign: 'center',
+        }}
+      >
+        {/* Logo */}
+<Avatar
+  src="/logo192.png"
+  variant="square"
+  sx={{
+    width: 80,
+    height: 80,
+    mb: 2,
+    mx: 'auto',
+    objectFit: 'contain',
+    bgcolor: 'transparent',
+  }}
+/>
+
+         
+
+        <Typography variant="h5" gutterBottom>
+          {isLogin ? 'Login' : 'Register'}
+        </Typography>
+
+        <TextField
+          fullWidth
+          label="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          fullWidth
+          type="password"
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleSubmit}
+          sx={{ mt: 1, mb: 2 }}
+        >
+          {isLogin ? 'Login' : 'Register'}
+        </Button>
+
+        <Typography variant="body2">
+          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          <Box
+            component="span"
+            sx={{
+              color: 'primary.main',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin ? 'Register here' : 'Login here'}
+          </Box>
+        </Typography>
+      </Paper>
+    </Box>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: 400,
-    margin: 'auto',
-    padding: 30,
-    textAlign: 'center',
-    background: '#f9f9f9',
-    borderRadius: 10,
-    marginTop: 100,
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-  },
-  input: {
-    width: '100%',
-    padding: 12,
-    marginBottom: 15,
-    fontSize: 16,
-    border: '1px solid #ccc',
-    borderRadius: 6,
-  },
-  button: {
-    width: '100%',
-    padding: 12,
-    backgroundColor: '#007bff',
-    color: '#fff',
-    fontSize: 16,
-    border: 'none',
-    borderRadius: 6,
-    cursor: 'pointer',
-  },
-  toggle: {
-    marginTop: 20,
-    fontSize: 14,
-  },
-  link: {
-    color: '#007bff',
-    textDecoration: 'underline',
-    cursor: 'pointer',
-  },
-};
 
 export default AuthPage;

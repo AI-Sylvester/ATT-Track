@@ -32,7 +32,7 @@ const Layout = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+   localStorage.removeItem('appToken');
     navigate('/');
   };
 
