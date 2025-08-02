@@ -119,14 +119,16 @@ function AuthPage() {
         {/* Logo */}
 <Avatar
   src="/logo192.png"
-  variant="square"
+  variant="rounded"
   sx={{
     width: 80,
     height: 80,
     mb: 2,
     mx: 'auto',
-    objectFit: 'contain',
-    bgcolor: 'transparent',
+    backgroundColor: 'transparent',
+    '& img': {
+      objectFit: 'contain',
+    },
   }}
 />
 
