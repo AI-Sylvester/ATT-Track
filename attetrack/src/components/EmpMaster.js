@@ -74,15 +74,22 @@ setFormData({
     setOpenDialog(true);
   };
 
-  const handleAdd = () => {
+ const handleAdd = async () => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/employee/next-empnumber`);
     setFormData({
-      EmpNumber: '', Name: '', DOB: '', Department: '', Mobile: '', Mobile2: '',
+      EmpNumber: data.nextEmpNumber.toString(),
+      Name: '', DOB: '', Department: '', Mobile: '', Mobile2: '',
       DOJ: '', Address: '', Designation: '', GuardianName: '', GuardianNumber: '',
       Password: '', Active: true
     });
     setEditId(null);
     setOpenDialog(true);
-  };
+  } catch (err) {
+    console.error('Failed to fetch next EmpNumber', err);
+    alert('Failed to fetch next EmpNumber');
+  }
+};
 
   useEffect(() => {
     fetchEmployees();

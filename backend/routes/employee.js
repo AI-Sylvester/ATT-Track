@@ -11,27 +11,34 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch employees' });
   }
 });
-
-// Add new employee
 router.post('/', async (req, res) => {
   const {
-    EmpNumber, Name, DOB, Department, Mobile, Mobile2,
+    Name, DOB, Department, Mobile, Mobile2,
     DOJ, Address, Designation, GuardianName, GuardianNumber,
     Password, Active
   } = req.body;
 
   try {
+    // Get current max EmpNumber
+    const result = await pool.query('SELECT MAX("EmpNumber") AS max_emp FROM "EMPLOYEEMAS"');
+    const currentMax = result.rows[0].max_emp || 999;
+    const nextEmpNumber = currentMax + 1;
+
+    if (nextEmpNumber > 9999) {
+      return res.status(400).json({ error: 'Max EmpNumber limit reached' });
+    }
+
     await pool.query(`
       INSERT INTO "EMPLOYEEMAS" (
         "EmpNumber", "Name", "DOB", "Department", "Mobile", "Mobile2", "DOJ",
         "Address", "Designation", "GuardianName", "G.Number", "Password", "Active"
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
     `, [
-      EmpNumber, Name, DOB, Department, Mobile, Mobile2, DOJ,
+      nextEmpNumber, Name, DOB, Department, Mobile, Mobile2, DOJ,
       Address, Designation, GuardianName, GuardianNumber, Password, Active
     ]);
 
-    res.json({ message: 'Employee added successfully' });
+    res.json({ message: 'Employee added successfully', EmpNumber: nextEmpNumber });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add employee', details: err.message });
   }
@@ -64,7 +71,17 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to update employee', details: err.message });
   }
 });
-
+router.get('/next-empnumber', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT MAX("EmpNumber") AS max_emp FROM "EMPLOYEEMAS"');
+    const maxEmp = result.rows[0].max_emp || 999;
+    const nextEmp = maxEmp + 1;
+    if (nextEmp > 9999) return res.status(400).json({ error: 'Limit reached' });
+    res.json({ nextEmpNumber: nextEmp });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch next EmpNumber' });
+  }
+});
 router.get('/basic', async (req, res) => {
   try {
     const result = await pool.query(`

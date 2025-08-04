@@ -40,7 +40,6 @@ const LeavePermissionList = () => {
 
         setRecords(leaveRes.data);
 
-        // Convert employee list to a dictionary { EmpNumber: { Name, Department } }
         const empMap = {};
         empRes.data.forEach(emp => {
           empMap[emp.EmpNumber] = { Name: emp.Name, Department: emp.Department };
@@ -59,33 +58,27 @@ const LeavePermissionList = () => {
 
   const getFilteredRecords = () => {
     const today = dayjs();
-
     return records.filter((r) => {
       const date = dayjs(r.EntryDate);
       switch (filter) {
-        case 'Today':
-          return date.isSame(today, 'day');
-        case 'Week':
-          return date.isSame(today, 'week');
-        case 'Month':
-          return date.isSame(today, 'month');
-        case 'LastMonth':
-          return date.isSame(today.subtract(1, 'month'), 'month');
-        default:
-          return true;
+        case 'Today': return date.isSame(today, 'day');
+        case 'Week': return date.isSame(today, 'week');
+        case 'Month': return date.isSame(today, 'month');
+        case 'LastMonth': return date.isSame(today.subtract(1, 'month'), 'month');
+        default: return true;
       }
     });
   };
 
   return (
-    <Box p={isMobile ? 1 : 3}>
-      <Typography variant={isMobile ? 'h6' : 'h5'} gutterBottom fontWeight="bold" color="primary">
+    <Box p={isMobile ? 1.5 : 4}>
+      <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight={600} color="primary" gutterBottom>
         Leave / Permission Records
       </Typography>
 
       <ButtonGroup
         variant="outlined"
-        sx={{ mb: 2, flexWrap: 'wrap' }}
+        sx={{ mb: 3, flexWrap: 'wrap' }}
         size={isMobile ? 'small' : 'medium'}
       >
         {FILTERS.map((f) => (
@@ -93,69 +86,83 @@ const LeavePermissionList = () => {
             key={f}
             variant={f === filter ? 'contained' : 'outlined'}
             onClick={() => setFilter(f)}
-            sx={{ minWidth: 90, mb: isMobile ? 1 : 0 }}
+            sx={{ minWidth: 100, mb: isMobile ? 1 : 0, textTransform: 'capitalize' }}
           >
             {f}
           </Button>
         ))}
       </ButtonGroup>
 
-      <Paper elevation={3} sx={{ overflow: 'auto' }}>
+      <Paper elevation={4} sx={{ overflow: 'auto', borderRadius: 2 }}>
         {loading ? (
-          <Box textAlign="center" p={3}>
+          <Box textAlign="center" p={4}>
             <CircularProgress />
           </Box>
         ) : getFilteredRecords().length === 0 ? (
-          <Box textAlign="center" p={3}>
-            <Typography>No records found.</Typography>
+          <Box textAlign="center" p={4}>
+            <Typography variant="body1">No records found.</Typography>
           </Box>
         ) : (
-     <Table size="small" sx={{ minWidth: 1000, tableLayout: 'fixed' }}>
-  <TableHead>
-    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-     
-      <TableCell sx={{ position: 'sticky', left: 0, backgroundColor: '#f5f5f5', zIndex: 1 }}>
-        <b>Name</b>
-      </TableCell>
-      <TableCell><b>Dept</b></TableCell>
-      <TableCell><b>Type</b></TableCell>
-      <TableCell><b>Session</b></TableCell>
-      <TableCell><b>From</b></TableCell>
-      <TableCell><b>To</b></TableCell>
-      <TableCell><b>Perm. Type</b></TableCell>
-      <TableCell><b>Approved By</b></TableCell>
-      <TableCell><b>Date</b></TableCell>
-    </TableRow>
-  </TableHead>
+          <Table size="small" sx={{ minWidth: 1000, tableLayout: 'fixed' }}>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: '#e3f2fd' }}>
+                <TableCell
+                  sx={{
+                    position: 'sticky',
+                    left: 0,
+                    backgroundColor: '#e3f2fd',
+                    zIndex: 1,
+                    fontWeight: 600,
+                  }}
+                >
+                  Name
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Dept</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Session</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>From</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>To</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Perm. Type</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Approved By</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
+              </TableRow>
+            </TableHead>
 
-  <TableBody>
-    {getFilteredRecords().map((row, i) => {
-      const emp = employeeList[row.EmpNumber] || {};
-      return (
-        <TableRow
-          key={row.ID}
-          sx={{
-            backgroundColor: i % 2 === 0 ? '#fafafa' : 'white',
-            '&:hover': { backgroundColor: '#e3f2fd' },
-          }}
-        >
-                 <TableCell sx={{ position: 'sticky', left: 0, backgroundColor: '#fff', zIndex: 1 }}>
-            {emp.Name || '-'}
-          </TableCell>
-          <TableCell>{emp.Department || '-'}</TableCell>
-          <TableCell>{row.Type}</TableCell>
-          <TableCell>{row.Session || '-'}</TableCell>
-          <TableCell>{formatTime(row.FromTime)}</TableCell>
-          <TableCell>{formatTime(row.ToTime)}</TableCell>
-          <TableCell>{row.PermissionType || '-'}</TableCell>
-          <TableCell>{row.ApprovedBy || '-'}</TableCell>
-          <TableCell>{dayjs(row.EntryDate).format('DD-MM-YYYY')}</TableCell>
-        </TableRow>
-      );
-    })}
-  </TableBody>
-</Table>
-
+            <TableBody>
+              {getFilteredRecords().map((row, i) => {
+                const emp = employeeList[row.EmpNumber] || {};
+                return (
+                  <TableRow
+                    key={row.ID}
+                    sx={{
+                      backgroundColor: i % 2 === 0 ? '#fafafa' : 'white',
+                      '&:hover': { backgroundColor: '#f0f7ff' },
+                    }}
+                  >
+                    <TableCell
+                      sx={{
+                        position: 'sticky',
+                        left: 0,
+                        backgroundColor: '#fff',
+                        zIndex: 1,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {emp.Name || '-'}
+                    </TableCell>
+                    <TableCell>{emp.Department || '-'}</TableCell>
+                    <TableCell>{row.Type}</TableCell>
+                    <TableCell>{row.Session || '-'}</TableCell>
+                    <TableCell>{formatTime(row.FromTime)}</TableCell>
+                    <TableCell>{formatTime(row.ToTime)}</TableCell>
+                    <TableCell>{row.PermissionType || '-'}</TableCell>
+                    <TableCell>{row.ApprovedBy || '-'}</TableCell>
+                    <TableCell>{dayjs(row.EntryDate).format('DD-MM-YYYY')}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         )}
       </Paper>
     </Box>

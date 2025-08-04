@@ -5,6 +5,7 @@ import {
   Button,
   useMediaQuery,
   Paper,
+  useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PeopleIcon from '@mui/icons-material/People';
@@ -13,103 +14,104 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const Home = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const actions = [
     {
       label: 'Employee Master',
-      icon: <PeopleIcon fontSize="small" />,
+      icon: <PeopleIcon sx={{ fontSize: 28 }} />,
       color: 'primary',
       path: '/empmaster',
     },
     {
       label: 'Punch Time',
-      icon: <AccessTimeIcon fontSize="small" />,
+      icon: <AccessTimeIcon sx={{ fontSize: 28 }} />,
       color: 'secondary',
       path: '/punch',
     },
     {
       label: 'Leave / Permission',
-      icon: <EventNoteIcon fontSize="small" />,
+      icon: <EventNoteIcon sx={{ fontSize: 28 }} />,
       color: 'error',
       path: '/leave',
     },
   ];
 
   return (
-  <Box
-    display="flex"
-    flexDirection="column"
-    alignItems="center"
-    sx={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}
-    px={1}
-    py={2}
-    mt={8} // Push content below AppBar
-  >
-    <Typography
-      variant="h6"
-      fontWeight={600}
-      sx={{
-        color: '#1a202c',
-        fontFamily: "'Segoe UI', Roboto, sans-serif",
-        mb: 2,
-      }}
-      align="center"
-    >
-      Admin Portal
-    </Typography>
-
     <Box
       display="flex"
-      flexDirection={isMobile ? 'column' : 'row'}
-      flexWrap="wrap"
-      justifyContent="center"
-      gap={2}
-      width="100%"
-      maxWidth={700}
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="flex-start"
+      sx={{
+        backgroundColor: '#f4f6f8',
+        minHeight: '100vh',
+        paddingTop: theme.spacing(10),
+        px: 2,
+      }}
     >
-      {actions.map((action) => (
-        <Paper
-          key={action.label}
-          elevation={2}
-          sx={{
-            width: isMobile ? '100%' : 180,
-            p: 1.5,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 2,
-            bgcolor: '#fff',
-            transition: 'all 0.2s ease-in-out',
-            '&:hover': {
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            },
-          }}
-        >
-          <Button
-            variant="contained"
-            color={action.color}
-            fullWidth
-            size="small"
-            onClick={() => navigate(action.path)}
-            startIcon={action.icon}
+      <Typography
+        variant="h5"
+        fontWeight={600}
+        sx={{
+          color: '#1a202c',
+          fontFamily: "'Segoe UI', Roboto, sans-serif",
+          mb: 3,
+        }}
+        align="center"
+      >
+        Admin Portal
+      </Typography>
+
+      <Box
+        display="grid"
+        gridTemplateColumns={isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))'}
+        gap={3}
+        width="100%"
+        maxWidth={720}
+      >
+        {actions.map((action) => (
+          <Paper
+            key={action.label}
+            elevation={3}
             sx={{
-              borderRadius: 2,
-              py: 1,
-              px: 1,
-              fontSize: 14,
-              fontWeight: 500,
-              textTransform: 'none',
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 3,
+              bgcolor: '#ffffff',
+              transition: 'transform 0.2s, box-shadow 0.3s',
+              '&:hover': {
+                transform: 'translateY(-3px)',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+              },
             }}
           >
-            {action.label}
-          </Button>
-        </Paper>
-      ))}
+            <Box mb={1}>{action.icon}</Box>
+            <Button
+              variant="contained"
+              color={action.color}
+              fullWidth
+              size="medium"
+              onClick={() => navigate(action.path)}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+                fontSize: 14,
+                py: 1,
+              }}
+            >
+              {action.label}
+            </Button>
+          </Paper>
+        ))}
+      </Box>
     </Box>
-  </Box>
-);
+  );
 };
 
 export default Home;

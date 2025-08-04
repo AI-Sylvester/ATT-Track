@@ -18,42 +18,79 @@ function AttendanceSummary() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/punchtime/summary`)
-      .then(res => setSummary(res.data))
-      .catch(err => console.error('❌ Fetch summary error:', err))
+    axios
+      .get(`${apiUrl}/punchtime/summary`)
+      .then((res) => setSummary(res.data))
+      .catch((err) => console.error('❌ Fetch summary error:', err))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Today's Attendance Summary
+    <Box sx={{ px: 2, py: 3 }}>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        sx={{
+          mb: 2,
+          color: '#1a202c',
+          fontFamily: "'Segoe UI', Roboto, sans-serif",
+          borderBottom: '2px solid #1976d2',
+          display: 'inline-block',
+          pb: 0.5,
+        }}
+      >
+        Today’s Attendance Summary
       </Typography>
 
-      <Paper elevation={3} sx={{ overflowX: 'auto' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          overflowX: 'auto',
+          p: 0,
+        }}
+      >
         {loading ? (
-          <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Box sx={{ p: 4, textAlign: 'center' }}>
             <CircularProgress />
           </Box>
         ) : (
-          <Table>
+          <Table size="small" sx={{ minWidth: 600 }}>
             <TableHead>
-              <TableRow>
-                <TableCell><strong>Emp Number</strong></TableCell>
-                <TableCell><strong>Name</strong></TableCell>
-                <TableCell><strong>Check In</strong></TableCell>
-                <TableCell><strong>Check Out</strong></TableCell>
+              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                <TableCell sx={{ fontWeight: 600, color: '#333' }}>Emp Number</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#333' }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#333' }}>Check In</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#333' }}>Check Out</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {summary.map((row, index) => (
-                <TableRow key={index}>
+                <TableRow
+                  key={index}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#fafafa',
+                    },
+                  }}
+                >
                   <TableCell>{row.EmpNumber}</TableCell>
                   <TableCell>{row.Name}</TableCell>
-                  <TableCell>{row.CheckIn || '-'}</TableCell>
-                  <TableCell>{row.CheckOut || '-'}</TableCell>
+                  <TableCell sx={{ color: row.CheckIn ? '#388e3c' : '#888' }}>
+                    {row.CheckIn || '-'}
+                  </TableCell>
+                  <TableCell sx={{ color: row.CheckOut ? '#d32f2f' : '#888' }}>
+                    {row.CheckOut || '-'}
+                  </TableCell>
                 </TableRow>
               ))}
+              {summary.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} align="center" sx={{ py: 3, color: '#888' }}>
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         )}

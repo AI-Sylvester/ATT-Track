@@ -68,122 +68,107 @@ const Layout = () => {
       <Box sx={{ mt: 8, px: 2 }}>
         <Outlet />
       </Box>
-
-      {/* Floating Bottom Navigation */}
-    <Paper
+<Paper
+  elevation={10}
   sx={{
     position: 'fixed',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 75,
-    background: 'rgba(255, 255, 255, 0.85)',
-    backdropFilter: 'blur(10px)',
-    WebkitBackdropFilter: 'blur(10px)',
+    height: 70,
+    backgroundColor: '#ffffff',
+    borderTop: '1px solid #e0e0e0',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    px: 5,
-    borderTop: '1px solid #e0e0e0',
-    zIndex: 1000,
-    boxShadow: '0 -6px 20px rgba(0, 0, 0, 0.08)',
-    transition: 'background 0.3s ease',
+    px: 4,
+    zIndex: 1200,
+    boxShadow: '0 -4px 12px rgba(0,0,0,0.06)',
   }}
-  elevation={6}
 >
-  {/* Left Icons */}
-  <Box sx={{ display: 'flex', gap: 3 }}>
+  {/* Left Group */}
+  <Box sx={{ display: 'flex', gap: 4 }}>
     <IconButton
       onClick={() => handleNav('/empmaster')}
       sx={{
-        position: 'relative',
-        transition: 'transform 0.2s ease',
-        '&:hover': { transform: 'scale(1.15)' },
+        color: navValue === '/empmaster' ? '#1976d2' : '#6b7280',
+        transition: 'all 0.2s',
+        '&:hover': {
+          color: '#0d47a1',
+        },
       }}
     >
-      <PeopleAltRoundedIcon
-        sx={{
-          color: navValue === '/empmaster' ? '#1976d2' : '#777',
-          fontSize: 28,
-          transition: 'color 0.3s ease',
-        }}
-      />
+      <PeopleAltRoundedIcon sx={{ fontSize: 26 }} />
     </IconButton>
     <IconButton
       onClick={() => handleNav('/summary')}
       sx={{
-        position: 'relative',
-        transition: 'transform 0.2s ease',
-        '&:hover': { transform: 'scale(1.15)' },
+        color: navValue === '/summary' ? '#1976d2' : '#6b7280',
+        transition: 'all 0.2s',
+        '&:hover': {
+          color: '#0d47a1',
+        },
       }}
     >
-      <PunchClockRoundedIcon
-        sx={{
-          color: navValue === '/summary' ? '#1976d2' : '#777',
-          fontSize: 28,
-          transition: 'color 0.3s ease',
-        }}
-      />
+      <PunchClockRoundedIcon sx={{ fontSize: 26 }} />
     </IconButton>
   </Box>
 
-  {/* Center FAB (Home) */}
-  <Fab
-    color="primary"
-    onClick={() => handleNav('/home')}
+  {/* Center Floating FAB */}
+  <Box
     sx={{
       position: 'absolute',
-      top: -30,
+      top: -10,
       left: '50%',
       transform: 'translateX(-50%)',
-      zIndex: 1100,
-      bgcolor: '#1976d2',
-      boxShadow: '0 8px 18px rgba(25, 118, 210, 0.5)',
-      transition: 'all 0.3s ease-in-out',
-      '&:hover': {
-        bgcolor: '#125399',
-        transform: 'translateX(-50%) scale(1.1)',
-        boxShadow: '0 10px 25px rgba(25, 118, 210, 0.8)',
-      },
     }}
   >
-    <HomeRoundedIcon />
-  </Fab>
+    <Fab
+      onClick={() => handleNav('/home')}
+      size="medium"
+      sx={{
+        bgcolor: '#1976d2',
+        color: '#fff',
+        boxShadow: '0 4px 16px rgba(25, 118, 210, 0.3)',
+        '&:hover': {
+          bgcolor: '#125399',
+        },
+      }}
+    >
+      <HomeRoundedIcon />
+    </Fab>
+  </Box>
 
-  {/* Right Icons */}
-  <Box sx={{ display: 'flex', gap: 3 }}>
+  {/* Right Group */}
+  <Box sx={{ display: 'flex', gap: 4 }}>
     <IconButton
       onClick={() => handleNav('/logs')}
       sx={{
-        transition: 'transform 0.2s ease',
-        '&:hover': { transform: 'scale(1.15)' },
+        color: navValue === '/logs' ? '#1976d2' : '#6b7280',
+        transition: 'all 0.2s',
+        '&:hover': {
+          color: '#0d47a1',
+        },
       }}
     >
-      <FactCheckRoundedIcon
-        sx={{
-          color: navValue === '/logs' ? '#1976d2' : '#777',
-          fontSize: 28,
-          transition: 'color 0.3s ease',
-        }}
-      />
+      <FactCheckRoundedIcon sx={{ fontSize: 26 }} />
     </IconButton>
     <IconButton
       onClick={() => handleNav('/leavelist')}
       sx={{
-        transition: 'transform 0.2s ease',
-        '&:hover': { transform: 'scale(1.15)' },
+        color: navValue === '/leavelist' ? '#1976d2' : '#6b7280',
+        transition: 'all 0.2s',
+        '&:hover': {
+          color: '#0d47a1',
+        },
       }}
     >
-      <EventNoteRoundedIcon
-        sx={{
-          color: navValue === '/leavelist' ? '#1976d2' : '#777',
-          fontSize: 28,
-          transition: 'color 0.3s ease',
-        }}
-      />
+      <EventNoteRoundedIcon sx={{ fontSize: 26 }} />
     </IconButton>
   </Box>
 </Paper>
+
+
 
     </Box>
   );
