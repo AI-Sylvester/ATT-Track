@@ -76,6 +76,18 @@ router.get('/next-empnumber', async (req, res) => {
     res.status(500).json({ error: 'Failed to get next EmpNumber' });
   }
 });
+
+router.get('/employee/departments', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT "Department" FROM "EMPLOYEEMAS" WHERE "Department" IS NOT NULL');
+    const departments = result.rows.map(row => row.Department);
+    res.json(departments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
 router.get('/basic', async (req, res) => {
   try {
     const result = await pool.query(`
