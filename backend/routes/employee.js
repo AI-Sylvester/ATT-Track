@@ -77,7 +77,7 @@ router.get('/next-empnumber', async (req, res) => {
   }
 });
 
-router.get('/employee/departments', async (req, res) => {
+router.get('/departments', async (req, res) => {
   try {
     const result = await pool.query('SELECT DISTINCT "Department" FROM "EMPLOYEEMAS" WHERE "Department" IS NOT NULL');
     const departments = result.rows.map(row => row.Department);
