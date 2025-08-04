@@ -68,7 +68,7 @@ router.put('/:id', async (req, res) => {
 });
 router.get('/next-empnumber', async (req, res) => {
   try {
-    const result = await pool.query(`SELECT MAX("EmpNumber") AS max_emp FROM "EMPLOYEEMAS"`);
+    const result = await pool.query(`SELECT MAX(CAST("EmpNumber" AS INTEGER)) AS max_emp FROM "EMPLOYEEMAS"`);
     const nextEmpNumber = (parseInt(result.rows[0].max_emp) || 1000) + 1;
     res.json({ nextEmpNumber });
   } catch (err) {
