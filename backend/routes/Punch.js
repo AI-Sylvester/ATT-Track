@@ -139,4 +139,65 @@ router.get('/summary', async (req, res) => {
   }
 });
 
+router.get('/summaryemp/:empNumber', async (req, res) => {
+  const { empNumber } = req.params;
+
+  try {
+    const client = await pool.connect();
+
+    const result = await client.query(`
+      SELECT 
+        a."EntryDate",
+        e."EmpNumber",
+        e."Name",
+        MIN(CASE WHEN a."AttendType" = 'CheckIn' THEN a."EntryTime" END) AS "CheckIn",
+        MAX(CASE WHEN a."AttendType" = 'CheckOut' THEN a."EntryTime" END) AS "CheckOut",
+        COUNT(*) AS "PunchCount"
+      FROM "AppTimeDet" a
+      JOIN "EMPLOYEEMAS" e ON a."Empcode"::int = e."ID"
+      WHERE e."EmpNumber" = $1
+      GROUP BY a."EntryDate", e."EmpNumber", e."Name"
+      ORDER BY a."EntryDate" DESC
+    `, [empNumber]);
+
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('❌ Summary Fetch Error:', err);
+    res.status(500).json({ error: 'Database error while fetching attendance summary' });
+  }
+});
+
+router.get('/:date/:empnumber', async (req, res) => {
+  const { date, empnumber } = req.params;
+
+  try {
+    const client = await pool.connect();
+
+    const result = await client.query(
+      `
+      SELECT 
+        e."Name", 
+        e."Department", 
+        a."Empnumber",  
+        a."AttendType", 
+        a."EntryTime" 
+      FROM "AppTimeDet" a
+      JOIN "EMPLOYEEMAS" e ON a."Empcode"::int = e."ID"
+      WHERE a."EntryDate"::date = $1 AND a."Empnumber" = $2
+      ORDER BY a."EntryTime" DESC
+      `,
+      [date, empnumber]
+    );
+
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('❌ Fetch Punch Logs Error:', err);
+    res.status(500).json({ error: 'Failed to fetch logs' });
+  }
+});
+
+
+
 module.exports = router;
