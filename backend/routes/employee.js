@@ -154,4 +154,26 @@ router.get('/basic-info/:empnumber', async (req, res) => {
     res.status(500).json({ error: 'Server error fetching info' });
   }
 });
+
+// Get employee profile by EmpNumber
+router.get('/profile/:empNumber', async (req, res) => {
+  const { empNumber } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "EMPLOYEEMAS" WHERE "EmpNumber" = $1',
+      [empNumber]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching profile:', err);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
 module.exports = router;
