@@ -56,7 +56,7 @@ const Layout = () => {
             AttendanceTrack
           </Typography>
           <IconButton onClick={handleMenuOpen}>
-            <Avatar sx={{ bgcolor: '#f7e600', color: '#000' }}>A</Avatar>
+            <Avatar sx={{ bgcolor: '#f5f4f0ff', color: '#000' }}>A</Avatar>
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>

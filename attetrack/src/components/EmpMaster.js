@@ -3,10 +3,11 @@ import axios from 'axios';
 import {
   Box, Button, Dialog, DialogTitle, DialogContent,
   DialogActions, TextField, Checkbox, FormControlLabel,
-  Table, TableHead, TableRow, TableCell, TableBody,
-  Paper, Typography, Grid, MenuItem
+  Table, TableHead, TableRow, TableCell, TableBody,Container,
+  Paper, Typography, 
 } from '@mui/material';
 import { apiUrl } from './config';
+import { Autocomplete } from '@mui/material';
 
 export default function EmpMaster() {
   const [employees, setEmployees] = useState([]);
@@ -97,7 +98,7 @@ export default function EmpMaster() {
           Employee Master
         </Typography>
         <Button variant="contained" color="primary" onClick={handleAdd}>
-          + Add Employee
+          Add Employee
         </Button>
       </Box>
 
@@ -131,74 +132,152 @@ export default function EmpMaster() {
           </TableBody>
         </Table>
       </Paper>
+<Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md">
+  <DialogTitle>{editId ? 'Edit Employee' : 'Add Employee'}</DialogTitle>
+<DialogContent dividers>
+  <Box
+    component="form"
+    onSubmit={handleSubmit}
+    noValidate
+    sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}
+  >
+    <Container disableGutters>
+      {/* Row 1 */}
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <TextField
+          label="Emp Number"
+          value={formData.EmpNumber}
+          fullWidth
+          InputProps={{ readOnly: true }}
+          variant="outlined"
+        />
+        <TextField
+          label="Name"
+          value={formData.Name}
+          onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          label="DOB"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={formData.DOB}
+          onChange={(e) => setFormData({ ...formData, DOB: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+      </Box>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md">
-        <DialogTitle>{editId ? 'Edit Employee' : 'Add Employee'}</DialogTitle>
-        <DialogContent>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <Grid container spacing={2}>
-              {[
-                { label: 'Emp Number', key: 'EmpNumber' },
-                { label: 'Name', key: 'Name' },
-                { label: 'DOB', key: 'DOB', type: 'date' },
-                { label: 'Mobile', key: 'Mobile' },
-                { label: 'Mobile2', key: 'Mobile2' },
-                { label: 'DOJ', key: 'DOJ', type: 'date' },
-                { label: 'Address', key: 'Address' },
-                { label: 'Designation', key: 'Designation' },
-                { label: 'Guardian Name', key: 'GuardianName' },
-                { label: 'Guardian Number', key: 'GuardianNumber' },
-                { label: 'Password', key: 'Password', type: 'password' },
-              ].map((field) => (
-                <Grid item xs={12} sm={6} key={field.key}>
-                  <TextField
-                    label={field.label}
-                    type={field.type || 'text'}
-                    fullWidth
-                    value={formData[field.key]}
-                    InputLabelProps={field.type === 'date' ? { shrink: true } : undefined}
-                    onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
-                  />
-                </Grid>
-              ))}
+      {/* Row 2 */}
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+        <TextField
+          label="DOJ"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={formData.DOJ}
+          onChange={(e) => setFormData({ ...formData, DOJ: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          label="Mobile"
+          value={formData.Mobile}
+          onChange={(e) => setFormData({ ...formData, Mobile: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          label="Alternate Mobile"
+          value={formData.Mobile2}
+          onChange={(e) => setFormData({ ...formData, Mobile2: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+      </Box>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Department"
-                  select
-                  fullWidth
-                  value={formData.Department}
-                  onChange={(e) => setFormData({ ...formData, Department: e.target.value })}
-                >
-                  {departments.map((dept) => (
-                    <MenuItem key={dept} value={dept}>
-                      {dept}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+      {/* Row 3 */}
+<Box sx={{ width: '100%', mb: 2 }}>
 
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.Active}
-                      onChange={(e) => setFormData({ ...formData, Active: e.target.checked })}
-                    />
-                  }
-                  label="Active"
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            {editId ? 'Update' : 'Save'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Autocomplete
+          freeSolo
+          options={departments}
+          value={formData.Department}
+          onInputChange={(event, newValue) =>
+            setFormData({ ...formData, Department: newValue })
+          }
+          renderInput={(params) => (
+            <TextField {...params} label="Department" fullWidth variant="outlined" />
+          )}
+        />
+        <TextField
+          label="Designation"
+          value={formData.Designation}
+          onChange={(e) => setFormData({ ...formData, Designation: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          label="Address"
+          multiline
+          minRows={2}
+          value={formData.Address}
+          onChange={(e) => setFormData({ ...formData, Address: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+      </Box>
+
+      {/* Row 4 */}
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+        <TextField
+          label="Guardian Name"
+          value={formData.GuardianName}
+          onChange={(e) => setFormData({ ...formData, GuardianName: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          label="Guardian Number"
+          value={formData.GuardianNumber}
+          onChange={(e) => setFormData({ ...formData, GuardianNumber: e.target.value })}
+          fullWidth
+          variant="outlined"
+        />
+        <Box sx={{ display: 'flex', gap: 2, flex: 1 }}>
+          <TextField
+            label="Password"
+            type="password"
+            value={formData.Password}
+            onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
+            fullWidth
+            variant="outlined"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.Active}
+                onChange={(e) => setFormData({ ...formData, Active: e.target.checked })}
+              />
+            }
+            label="Active"
+            sx={{ alignSelf: 'center' }}
+          />
+        </Box>
+      </Box>
+    </Container>
+  </Box>
+</DialogContent>
+
+
+  <DialogActions>
+    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+    <Button onClick={handleSubmit} variant="contained" color="primary">
+      {editId ? 'Update' : 'Save'}
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Box>
   );
 }

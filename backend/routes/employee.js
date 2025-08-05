@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // Get all employees
 router.get('/', async (req, res) => {
@@ -102,5 +104,54 @@ router.get('/basic', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch employee list' });
   }
 });
+router.post('/login', async (req, res) => {
+  const { EmpNumber, Password } = req.body;
 
+  try {
+    const result = await pool.query(
+      `SELECT * FROM "EMPLOYEEMAS" WHERE "EmpNumber" = $1 AND "Password" = $2 AND "Active" = true`,
+      [EmpNumber, Password]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const employee = result.rows[0];
+
+    const token = jwt.sign(
+      {
+        empnumber: employee.EmpNumber,
+        name: employee.Name,
+        role: 'employee',
+      },
+JWT_SECRET,      { expiresIn: '8h' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      empnumber: employee.EmpNumber,
+      name: employee.Name,
+    });
+  } catch (err) {
+    console.error('Login failed:', err);
+    res.status(500).json({ error: 'Server error during login' });
+  }
+});
+
+router.get('/basic-info/:empnumber', async (req, res) => {
+  const empnumber = req.params.empnumber;
+  try {
+    const result = await pool.query(
+      `SELECT "Name", "Department" FROM "EMPLOYEEMAS" WHERE "EmpNumber" = $1`,
+      [empnumber]
+    );
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Employee not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Fetch basic-info error:', err);
+    res.status(500).json({ error: 'Server error fetching info' });
+  }
+});
 module.exports = router;
